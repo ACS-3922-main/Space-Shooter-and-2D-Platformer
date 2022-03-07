@@ -9,9 +9,13 @@ public class ShipController : MonoBehaviour{
     private float _speed = 5;
     private float _boundary = 3.5f;
     Rigidbody2D _rb;
+    AudioSource audio;
+    public Animator transition;
+    private float sec = 3.0f;
 
     void Start(){
         _rb = GetComponent<Rigidbody2D>();
+        audio = GetComponent<AudioSource>();
     }
 
     void Update(){
@@ -44,8 +48,16 @@ public class ShipController : MonoBehaviour{
     
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "AShot") {
-            Destroy(gameObject);
+            GetComponent<AudioSource>().Play();
+            transition.SetTrigger("Death");
+            FindObjectOfType<UIScript>().Miss();
+            this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            Invoke("enableBoxCollider",3);
             Destroy(other.gameObject);
         }
+    }
+    private void enableBoxCollider()
+    {
+        this.gameObject.GetComponent<BoxCollider2D>().enabled = true;
     }
 }
